@@ -3,8 +3,8 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum ConnectorError {
     /// ReqwestError.
-    #[error("ReqwestError error")]
-    ReqwestError,
+    #[error("ReqwestError error: {0}")]
+    ReqwestError(String),
 
     /// HTTP response error.
     #[error("HTTP error: `{0}`, `{1}`, {2}`")]
@@ -44,14 +44,11 @@ impl From<url::ParseError> for ConnectorError {
     }
 }
 
-impl From<reqwest::Error> for ConnectorError {
-    fn from(_: reqwest::Error) -> Self {
-        ConnectorError::ReqwestError
-    }
-}
-
 impl From<std::io::Error> for ConnectorError {
     fn from(_: std::io::Error) -> Self {
         ConnectorError::FileIOError
     }
 }
+
+unsafe impl Send for ConnectorError{}
+unsafe impl Sync for ConnectorError{}
