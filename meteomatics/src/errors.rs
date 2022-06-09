@@ -49,3 +49,6 @@ impl From<std::io::Error> for ConnectorError {
         ConnectorError::FileIOError
     }
 }
+
+unsafe impl Send for ConnectorError{}
+unsafe impl Sync for ConnectorError{}

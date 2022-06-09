@@ -61,6 +61,9 @@ impl fmt::Display for TimeSeries {
     }
 }
 
+unsafe impl Send for TimeSeries{}
+unsafe impl Sync for TimeSeries{}
+
 /// Top-level struct for the De-serialization of the query results for <https://api.meteomatics.com/user_stats_json>.
 /// This query gives an overview about the request activity of your account as well as information about
 /// the feature availability for your account (e.g. if you are allowed to download gridded data or not.)

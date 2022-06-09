@@ -70,3 +70,8 @@ impl fmt::Display for BBox {
         )
     }
 }
+
+unsafe impl Send for Point{}
+unsafe impl Sync for Point{}
+unsafe impl Send for BBox{}
+unsafe impl Sync for BBox{}
