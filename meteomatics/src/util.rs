@@ -31,7 +31,7 @@ const BASE_URL: &str = "https://api.meteomatics.com";
 /// # Examples
 /// 
 /// ```rust, no_run
-/// use rust_connector_api::TimeSeries;
+/// use meteomatics::TimeSeries;
 /// use chrono::{DateTime, Duration, Utc, TimeZone};
 /// let dt_start = Utc::now();
 /// let time_series = TimeSeries {
@@ -111,8 +111,11 @@ pub struct Limit{
 
 // Deserializes the response for the user_stats_json query.
 pub async fn extract_user_statistics(response: Response) -> std::result::Result<UStatsResponse, ConnectorError> {
-    let json: UStatsResponse = response.json::<UStatsResponse>().await?;
-    Ok(json)
+    match response.json::<UStatsResponse>()
+        .await {
+            Ok(json) => Ok(json),
+            Err(e) => Err(ConnectorError::ReqwestError(e.to_string())),
+        }
 }
 
 /// Writes the HTTP response to a file. 
@@ -123,7 +126,7 @@ pub async fn extract_user_statistics(response: Response) -> std::result::Result<
 /// * `file_name` - The name for the file to be written (complete with path). 
 /// 
 pub async fn write_file(response: Response, file_name: &String) -> std::result::Result<(), ConnectorError> {
-    let body = response.bytes().await?;
+    let body = response.bytes().await.map_err(|e| ConnectorError::ReqwestError(e.to_string())).unwrap();
     let mut content = std::io::Cursor::new(body);
 
     let mut file = File::create(file_name)?;
@@ -593,7 +596,7 @@ mod tests {
         let s10 = r#": 0, "soft limit" : 20, "hard limit" : 500}, "historic request option" : "19"#;
         let s11 = r#"00-01-01T00:00:00Z--2100-01-01T00:00:00Z", "area request option" : true, "mo"#;
         let s12 = r#"del set" : ["all_minus_euro1k"], "error message" : "", "contact emails" : [""#;
-        let s13 = r#"rustythecrab@rust_connector_api.com"]}}"#;
+        let s13 = r#"rustythecrab@meteomatics.com"]}}"#;
         let s = [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13].concat();
 
         let json: UStatsResponse = serde_json::from_str(&s).unwrap();
@@ -622,7 +625,7 @@ mod tests {
         assert_eq!(json.stats.models[0], "all_minus_euro1k");
 
         // Check if the contact was correctly deserialized.
-        assert_eq!(json.stats.contact[0], "rustythecrab@rust_connector_api.com");
+        assert_eq!(json.stats.contact[0], "rustythecrab@meteomatics.com");
     }
 
     /// Query for all stations on the globe no matter which parameters are measured:
