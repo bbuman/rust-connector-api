@@ -252,6 +252,41 @@ pub async fn parse_grid_response_to_df(
         Ok(dataframe)
 }
 
+pub async fn build_station_list_query_specs(
+    location: &Option<&str>,
+    parameters: &Option<Vec<&str>>,
+    elevation: &Option<u64>,
+    startdate: &Option<chrono::DateTime<chrono::Utc>>,
+    enddate: &Option<chrono::DateTime<chrono::Utc>>
+) -> String {
+    let mut query_specs = match location {
+        None => String::from("find_station?"),
+        Some(loc) => format!("find_station?location={}", loc)
+    };
+
+    query_specs = match parameters {
+        None => query_specs,
+        Some(params) => format!("{}&parameters={}", query_specs, params.join(","))
+    };
+
+    query_specs = match elevation {
+        None => query_specs,
+        Some(elev) => format!("{}&elevation={}", query_specs, elev)
+    };
+
+    query_specs = match startdate {
+        None => query_specs,
+        Some(date) => format!("{}&startdate={}", query_specs, date.to_rfc3339())
+    };
+
+    query_specs = match enddate {
+        None => query_specs,
+        Some(date) => format!("{}&enddate={}", query_specs, date.to_rfc3339())
+    };
+    
+    query_specs
+}
+
 /// Builds the query specifications ('specs') for a time series query according to the Meteomatics API
 /// format rules. Optionally parses a number of provided extra specifiers (e.g. 'model=mix'). The
 /// dates are formatted according to ISO8601 (<https://en.wikipedia.org/wiki/ISO_8601>). The format
@@ -588,5 +623,63 @@ mod tests {
 
         // Check if the contact was correctly deserialized.
         assert_eq!(json.stats.contact[0], "rustythecrab@rust_connector_api.com");
+    }
+
+    /// Query for all stations on the globe no matter which parameters are measured:
+    #[tokio::test]
+    async fn station_list_all(){
+        let all_stations = String::from("find_station?");
+        let location = None;
+        let elevation = None;
+        let parameters = None;
+        let startdate = None;
+        let enddate = None;
+        let query_string = crate::util::build_station_list_query_specs(
+            &Option::from(location), 
+            &Option::from(elevation),
+            &Option::from(parameters),
+            &Option::from(startdate),
+            &Option::from(enddate)
+        ).await;
+        assert_eq!(all_stations, query_string);
+    }
+
+    /// Query for all stations in Germany that measure precipitation at a height of approximately 
+    /// 300 m above sea level. 
+    #[tokio::test]
+    async fn station_list_named_location(){
+        let all_stations = String::from("find_station?location=germany&parameters=precip_1h:mm&elevation=300");
+        let location = "germany";
+        let elevation = 300;
+        let parameters = vec!["precip_1h:mm"];
+        let startdate = None;
+        let enddate = None;
+        let query_string = crate::util::build_station_list_query_specs(
+            &Option::from(location),
+            &Option::from(parameters), 
+            &Option::from(elevation),
+            &Option::from(startdate),
+            &Option::from(enddate)
+        ).await;
+        assert_eq!(all_stations, query_string);
+    }
+
+    // Find a station for a coordinate that measures temperature at least since Jan 1st, 2018. 
+    #[tokio::test]
+    async fn station_list_latlon_startdate() {
+        let all_stations = String::from("find_station?location=50.705502,10.467007&parameters=t_2m:C&startdate=2018-01-01T00:00:00+00:00");
+        let location = "50.705502,10.467007";
+        let elevation = None;
+        let parameters = vec!["t_2m:C"];
+        let startdate = Utc.ymd(2018, 1, 1).and_hms(0, 0, 0);
+        let enddate = None;
+        let query_string = crate::util::build_station_list_query_specs(
+            &Option::from(location), 
+            &Option::from(parameters),
+            &Option::from(elevation),
+            &Option::from(startdate),
+            &Option::from(enddate)
+        ).await;
+        assert_eq!(all_stations, query_string);
     }
 }

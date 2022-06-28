@@ -1,6 +1,6 @@
 //! # NetCDF Query 
 //! NetCDF queries allow you to request a time series of  weather and climate data for cells in a 
-//! rectangular grid, where the grid is defined by a bounding box. The bounding box or [`BBox`](`rust_connector_api::BBox`) is
+//! rectangular grid, where the grid is defined by a bounding box. The bounding box or [`BBox`](`meteomatics::BBox`) is
 //! defined by the upper left (i.e. North Western) corner and lower right(i.e. South Eastern) corner). 
 //! The cell size in turn is defined either in pixels (```res_lat=400``` = 400 pixel heigh cells) or
 //! in degrees (e.g. ```res_lat=0.1```= 0.1° or about 1 km at the equator). 
@@ -8,7 +8,7 @@
 //!# The Example
 //! The example demonstrates how to request current temperature and precipitation data for Switzerland. 
 //! The grid is spaced in 0.1 ° (or about 1 km cell width and cell height). Since we are using the
-//! NetCDF query we can request a time series. For this we use the [`TimeSeries`](`rust_connector_api::TimeSeries`),
+//! NetCDF query we can request a time series. For this we use the [`TimeSeries`](`meteomatics::TimeSeries`),
 //! where we specify time and date of the start and end of the time series together with information 
 //! about the temporal spacing (i.e. the distance between consecutive points in time).
 //! There are several optional parameters you can pass to the meteomatics API that will change the 
