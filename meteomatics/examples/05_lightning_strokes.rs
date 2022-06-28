@@ -1,6 +1,6 @@
 //! # Query Lightnings
 //! Lightning queries allow you to for reports of lightning in an area (defined by a bounding box) in 
-//! a certain time frame. The bounding box or [`BBox`](`meteomatics::BBox`) is
+//! a certain time frame. The bounding box or [`BBox`](`rust_connector_api::BBox`) is
 //! defined by the upper left (i.e. North Western) corner and lower right(i.e. South Eastern) corner). 
 //! For this query we don't need to define a latidue and longitude resolution (just set it to 0.0).
 //! 

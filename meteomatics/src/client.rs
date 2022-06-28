@@ -45,53 +45,6 @@ impl APIClient {
         }
     }
 
-    /// Finds weather measurement stations matching certains criteria. 
-    /// 
-    /// # Arguments
-    /// 
-    /// * `location` - lat/lon pair (47.3,9.3), bounding box (47.3,9.3_40,10) or other specifier 
-    /// (germany)  specifying the location
-    /// * `elevation` - Elevation in m (2500)
-    /// * `parameters` - A number of parameter names (t_2m:C, wind_speed_10m:ms)
-    /// * `startdate` - The earliest time you are interested in
-    /// * `enddate` - The latest time you are interested in 
-    pub async fn query_station_list(
-        &self,
-        location: &Option<&str>,
-        parameters: &Option<Vec<&str>>,
-        elevation: &Option<u64>,
-        startdate: &Option<chrono::DateTime<chrono::Utc>>,
-        enddate: &Option<chrono::DateTime<chrono::Utc>>
-    ) -> std::result::Result<polars::frame::DataFrame, ConnectorError> {
-        // Create the query specs
-        let query_specs = build_station_list_query_specs(
-            location, parameters, elevation, startdate, enddate
-        ).await;
-
-        // Create the full URL
-        let full_url = build_url(&query_specs).await.map_err(|_| ConnectorError::ParseError)?;
-
-        // Get the query result
-        let result = self.do_http_get(full_url).await;
-
-        // Match the result
-        match result {
-            Ok(response) => match response.status() {
-                StatusCode::OK => {
-                    let df = parse_response_to_df(response).await
-                    .map_err(|e| ConnectorError::PolarsError(e.to_string()))?;
-                    Ok(df)
-                }
-                status => Err(ConnectorError::HttpError(
-                    status.to_string(),
-                    response.text().await.unwrap(),
-                    status,
-                )),
-            },
-            Err(e) => Err(ConnectorError::ReqwestError(e.to_string())),
-        }
-    }
-
     /// Route query using postal codes.
     /// 
     /// # Arguments

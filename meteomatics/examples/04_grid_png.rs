@@ -1,6 +1,6 @@
 //! # PNG Grid Query 
 //! PNG grid queries allow you to request an image of weather and climate data for cells in a 
-//! rectangular grid, where the grid is defined by a bounding box. The bounding box or [`BBox`](`meteomatics::BBox`) is
+//! rectangular grid, where the grid is defined by a bounding box. The bounding box or [`BBox`](`rust_connector_api::BBox`) is
 //! defined by the upper left (i.e. North Western) corner and lower right(i.e. South Eastern) corner). 
 //! The cell size in turn is defined either in pixels (```res_lat=400``` = 400 pixel heigh cells) or
 //! in degrees (e.g. ```res_lat=0.1```= 0.1° or about 7 km at the equator). 
