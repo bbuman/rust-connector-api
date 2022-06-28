@@ -2,7 +2,7 @@
 //! 
 //! Time series queries allow you to request weather and climate data for specific places on the globe 
 //! defined by their latitude and longitude coordinates in a time series. You can query any number of
-//! points and any number of parameters. The respective method is [`rust_connector_api::APIClient::query_time_series`].
+//! points and any number of parameters. The respective method is [`meteomatics::APIClient::query_time_series`].
 //! 
 //! # The Example
 //! The example demonstrates how to request temperature and precipitation data for every hour between

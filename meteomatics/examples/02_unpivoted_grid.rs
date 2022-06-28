@@ -1,8 +1,8 @@
 //! # Unpivoted Grid Query 
 //! Grid queries allow you to request weather and climate data for cells in a rectangular grid, where
-//! the grid is defined by a bounding box. The function [`query_grid_unpivoted`](`rust_connector_api::APIClient::query_grid_unpivoted`) 
-//! allows to download more than a single parameter (whereas [`query_grid_pivoted`](`rust_connector_api::APIClient::query_grid_pivoted`)
-//! only allows a single parameter). The bounding box or [`BBox`](`rust_connector_api::BBox`) is defined 
+//! the grid is defined by a bounding box. The function [`query_grid_unpivoted`](`meteomatics::APIClient::query_grid_unpivoted`) 
+//! allows to download more than a single parameter (whereas [`query_grid_pivoted`](`meteomatics::APIClient::query_grid_pivoted`)
+//! only allows a single parameter). The bounding box or [`BBox`](`meteomatics::BBox`) is defined 
 //! by the upper left (i.e. North Western) corner and lower right(i.e. South Eastern) corner). The cell 
 //! size in turn is defined either in pixels (```res_lat=400``` = 400 pixel heigh cells) or in degrees 
 //! (e.g. ```res_lat=0.1```= 0.1° or about 7 km at the equator). 
